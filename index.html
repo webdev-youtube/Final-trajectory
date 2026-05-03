@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>FINAL TRAJECTORY</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Main Menu -->
+    <div id="main-menu" class="screen active">
+      <div class="menu-bg-grid"></div>
+      <div class="menu-content">
+        <div class="title-block">
+          <div class="title-eyebrow">TACTICAL DEFENSE SYSTEM</div>
+          <h1 class="title-main">FINAL<span class="title-slash">//</span>TRAJECTORY</h1>
+          <div class="title-sub">ROGUELITE PROTOCOL v1.0.5</div>
+        </div>
+        <div class="menu-stats-row">
+          <div class="stat-chip"><span class="stat-label">BEST SCORE</span><span class="stat-val" id="menu-best-score">0</span></div>
+          <div class="stat-chip"><span class="stat-label">BEST SHOT</span><span class="stat-val" id="menu-best-shot">0</span></div>
+          <div class="stat-chip"><span class="stat-label">LIFETIME KILLS</span><span class="stat-val" id="menu-lifetime-kills">0</span></div>
+        </div>
+        <div class="menu-buttons">
+          <button class="btn-primary" id="btn-start">INITIATE RUN</button>
+          <button class="btn-secondary" id="btn-upgrades-menu">UPGRADES</button>
+        </div>
+        <div class="seed-row">
+          <span class="seed-label">SEED:</span>
+          <input type="text" id="seed-input" class="seed-input" placeholder="random" maxlength="12">
+          <button class="btn-tiny" id="btn-random-seed">RNG</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game UI Overlay -->
+    <div id="game-ui" class="screen hidden">
+      <div id="top-bar">
+        <!-- Row 1: stats -->
+        <div id="top-row-1">
+          <div class="top-left">
+            <div class="currency-display">
+              <span class="currency-icon">◈</span>
+              <span id="ui-currency">0</span>
+            </div>
+            <div class="ui-divider"></div>
+            <div class="hp-display">
+              <span class="hp-icon">♦</span>
+              <span id="ui-hp">10</span>
+            </div>
+          </div>
+          <div class="top-center">
+            <div class="kill-bar-wrap">
+              <div class="kill-bar-label">UPGRADE BAR</div>
+              <div class="kill-bar-track">
+                <div id="kill-bar-fill" class="kill-bar-fill"></div>
+              </div>
+            </div>
+          </div>
+          <div class="top-right">
+            <div class="score-display">
+              <span class="score-label">SCORE</span>
+              <span id="ui-score">0</span>
+            </div>
+            <div class="ui-divider"></div>
+            <div class="time-display">
+              <span class="time-label">TIME</span>
+              <span id="ui-time">0:00</span>
+            </div>
+            <div class="boss-timer-display hidden" id="boss-timer-wrap">
+              <span class="boss-timer-label">BOSS IN</span>
+              <span id="ui-boss-timer">0:30</span>
+            </div>
+          </div>
+        </div>
+        <!-- Row 2: action buttons -->
+        <div id="top-row-2">
+          <button class="btn-icon" id="btn-pause">⏸</button>
+          <button class="btn-icon" id="btn-upgrade-tab">⬆</button>
+        </div>
+      </div>
+      <div id="best-shot-display">
+        <span class="bs-label">BEST SHOT</span>
+        <span id="ui-best-shot-run">0</span>
+      </div>
+      <div id="combo-display" class="hidden">
+        <span id="combo-text">x1</span>
+      </div>
+    </div>
+
+    <!-- Canvas container -->
+    <div id="canvas-wrap">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <!-- Upgrade Selection Screen -->
+    <div id="upgrade-selection" class="screen hidden">
+      <div class="upgrade-sel-bg"></div>
+      <div class="upgrade-sel-content">
+        <div class="upgrade-sel-header">
+          <div class="upgrade-sel-title">UPGRADE PROTOCOL</div>
+          <div class="upgrade-sel-sub">SELECT ONE ENHANCEMENT</div>
+        </div>
+        <div id="upgrade-cards" class="upgrade-cards-row"></div>
+      </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pause-menu" class="screen hidden">
+      <div class="pause-content">
+        <div class="pause-title">PAUSED</div>
+        <div class="pause-stats" id="pause-stats"></div>
+        <div class="pause-buttons">
+          <button class="btn-primary" id="btn-resume">RESUME</button>
+          <button class="btn-secondary" id="btn-upgrades-pause">UPGRADES</button>
+          <button class="btn-danger" id="btn-quit">QUIT RUN</button>
+          <button class="btn-reset" id="btn-reset-progress">RESET ALL PROGRESS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset Confirmation Dialog -->
+    <div id="reset-confirm" class="screen hidden">
+      <div class="reset-confirm-content">
+        <div class="reset-confirm-title">WIPE ALL DATA?</div>
+        <div class="reset-confirm-sub">This permanently deletes all upgrades, currency, scores, and stats. This cannot be undone.</div>
+        <div class="reset-confirm-buttons">
+          <button class="btn-danger" id="btn-reset-confirm-yes">CONFIRM WIPE</button>
+          <button class="btn-secondary" id="btn-reset-confirm-no">CANCEL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Permanent Upgrades Panel -->
+    <div id="perm-upgrade-panel" class="screen hidden">
+      <div class="perm-panel-content">
+        <div class="perm-panel-header">
+          <div class="perm-panel-title">PERMANENT UPGRADES</div>
+          <div class="currency-display">
+            <span class="currency-icon">◈</span>
+            <span id="perm-currency">0</span>
+          </div>
+          <button class="btn-icon close-btn" id="btn-close-perm">✕</button>
+        </div>
+        <div id="perm-upgrades-grid" class="perm-upgrades-grid"></div>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="screen hidden">
+      <div class="gameover-content">
+        <div class="gameover-title" id="gameover-title">RUN TERMINATED</div>
+        <div class="gameover-stats" id="gameover-stats"></div>
+        <div class="gameover-currency" id="gameover-currency"></div>
+        <div class="gameover-buttons">
+          <button class="btn-primary" id="btn-restart">NEW RUN</button>
+          <button class="btn-secondary" id="btn-upgrades-gameover">UPGRADES</button>
+          <button class="btn-secondary" id="btn-main-menu">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boss Warning -->
+    <div id="boss-warning" class="hidden">
+      <div class="boss-warn-text" id="boss-warn-text">BOSS INCOMING</div>
+    </div>
+
+    <!-- Floating text container -->
+    <div id="float-texts"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
